@@ -60,6 +60,7 @@ class RecorderActivity : Activity() {
         recordUtil.setOnRecordCall(object : IRecordCall() {
             override fun onStartPreview() {
                 progressBar.visibility = View.GONE
+                ticketView.visibility = View.GONE
                 okBtn.visibility = View.GONE
                 deleteBtn.visibility = View.GONE
                 playBtn.visibility = View.GONE
@@ -74,17 +75,21 @@ class RecorderActivity : Activity() {
                     okBtn.visibility = View.VISIBLE
                     deleteBtn.visibility = View.VISIBLE
                 }
-                switchCameraBtn.visibility = View.GONE
                 progressBar.visibility = View.GONE
+                switchCameraBtn.visibility = View.GONE
+                ticketView.visibility = View.GONE
             }
 
             override fun onStartRecord() {
+                progressBar.visibility = View.GONE
                 switchCameraBtn.visibility = View.GONE
                 if (maxDuration > 0) {
-                    progressBar.visibility = View.VISIBLE
-                    progressBar.max = maxDuration
-                    progressBar.progress = maxDuration
+                    ticketView.setTime(maxDuration)
+                } else {
+                    ticketView.setTime(0)
                 }
+                ticketView.visibility = View.VISIBLE
+                ticketView.startTicket()
                 Log("onStartRecord")
             }
 
@@ -95,24 +100,30 @@ class RecorderActivity : Activity() {
                     okBtn.visibility = View.VISIBLE
                     deleteBtn.visibility = View.VISIBLE
                 }
-                progressBar.visibility = View.GONE
+                ticketView.stopTicket()
+//                ticketView.visibility = View.GONE
             }
 
             override fun onRecordTimeTicket(time: Long) {
                 if (maxDuration > 0) {
-                    progressBar.progress = max(maxDuration - time.toInt(), 0)
+                    ticketView.setTime(max(maxDuration * 1000 - time, 0L).toInt())
+                } else {
+                    ticketView.setTime((time / 1000).toInt())
                 }
                 Log("onRecordTimeTicket $time")
             }
 
             override fun onError(msg: String?) {
                 Toast.makeText(this@RecorderActivity, msg ?: "录制错误！", Toast.LENGTH_SHORT).show()
+                recordUtil.release()
+                recordUtil.startPreview()
                 Log("onError $msg")
             }
         })
         playerUtil.setOnPlayCall(object : IPlayerCall() {
             override fun onStartPlay() {
                 progressBar.visibility = View.VISIBLE
+                progressBar.progress = 0
             }
 
             override fun onComplete() {
@@ -182,8 +193,6 @@ class RecorderActivity : Activity() {
 
     companion object {
         const val CONFIG = "config_camera"
-
-        const val DURATION = "MAX_DURATION"
         const val RESULT_KEY = "result_file"
     }
 }

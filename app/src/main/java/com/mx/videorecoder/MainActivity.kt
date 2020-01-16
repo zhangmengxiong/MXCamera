@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, 0x22)
         }
         spBtn.setOnClickListener {
-            val config = CameraConfigBuild.createSimplePicConfig(this)
+            val config = CameraConfigBuild.createSimple3GPConfig(this)
             val intent = Intent(this, RecorderActivity::class.java)
                     .putExtra(RecorderActivity.CONFIG, config)
             startActivityForResult(intent, 0x22)

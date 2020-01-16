@@ -226,6 +226,7 @@ class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
 
     fun stopRecord() {
         if (curState != STATE_RECORDING) return
+        val time = abs(recordStartTime - System.currentTimeMillis())
         try {
             mMediaRecorder?.apply {
                 stop()
@@ -247,11 +248,14 @@ class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
 
             setState(STATE_INIT)
             mHandler.removeCallbacksAndMessages(null)
-
-            val time = abs(recordStartTime - System.currentTimeMillis())
             recordCall?.onStopRecord(time)
         } catch (e: Exception) {
             e.printStackTrace()
+            if (time < 2000) {
+                recordCall?.onError("录制时间过短！")
+            } else {
+                recordCall?.onError(e.message ?: "录制错误！")
+            }
             setState(STATE_ERROR)
         }
     }

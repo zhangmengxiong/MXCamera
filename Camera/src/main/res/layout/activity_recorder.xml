@@ -18,6 +18,15 @@
         android:progressDrawable="@drawable/bg_mx_progress"
         android:visibility="gone" />
 
+    <com.mx.camera.views.RecordTicketView
+        android:id="@+id/ticketView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp" />
+
     <ImageView
         android:id="@+id/cancelBtn"
         android:layout_width="60dp"
