@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/zpBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="简单拍摄照片" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/spBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="简单录制视频" />
+
+    <Button
+        android:id="@+id/zp2Btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Build拍摄照片" />
+
+</LinearLayout>

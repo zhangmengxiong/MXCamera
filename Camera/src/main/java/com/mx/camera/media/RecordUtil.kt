@@ -4,7 +4,7 @@ import android.hardware.Camera
 import android.media.MediaRecorder
 import android.os.Handler
 import android.view.SurfaceHolder
-import com.mx.camera.CameraConfig
+import com.mx.camera.config.CameraConfig
 import com.mx.camera.Log
 import java.io.File
 import kotlin.concurrent.thread

@@ -7,6 +7,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import com.mx.camera.config.CameraConfig
+import com.mx.camera.config.CameraConfigBuild
 import com.mx.camera.media.IRecordCall
 import com.mx.camera.media.RecordUtil
 import com.mx.camera.player.IPlayerCall
@@ -18,7 +20,7 @@ import kotlin.math.max
 class RecorderActivity : Activity() {
     private val cameraConfig: CameraConfig by lazy {
         (intent.getSerializableExtra(CONFIG) as CameraConfig?)
-                ?: CameraConfig.createSimple3GPConfig(this)
+                ?: CameraConfigBuild.createSimple3GPConfig(this)
     }
     private val maxDuration: Int by lazy { cameraConfig.maxDuration }
     private val file: File by lazy { File(cameraConfig.outputFile) }
