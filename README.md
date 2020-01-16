@@ -1,5 +1,6 @@
 # MXCamera
 一个简单的android 拍摄/录像开源工具包，开箱可用
+最新版本：[![](https://jitpack.io/v/zhangmengxiong/MXCamera.svg)](https://jitpack.io/#zhangmengxiong/MXCamera)
 
 使用方法：
 第一步：根目录添加gitpack的maven仓库
@@ -17,7 +18,7 @@
 	        implementation 'com.github.zhangmengxiong:MXCamera:xxx'
 	}
 ```
-最新版本：[![](https://jitpack.io/v/zhangmengxiong/MXCamera.svg)](https://jitpack.io/#zhangmengxiong/MXCamera)
+
 
 第三步：添加Activity声明/权限声明
 ```
