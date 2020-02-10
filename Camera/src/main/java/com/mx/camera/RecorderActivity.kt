@@ -146,7 +146,7 @@ class RecorderActivity : Activity() {
         okBtn.setOnClickListener {
             if (file.exists()) {
                 setResult(RESULT_OK, Intent().apply {
-                    putExtra(RESULT_KEY, file.absoluteFile)
+                    putExtra(RESULT_KEY, file.absolutePath)
                 })
             }
             finish()
