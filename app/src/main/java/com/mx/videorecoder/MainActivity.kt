@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                 1
         )
+
         zpBtn.setOnClickListener {
             val config = CameraConfigBuild.createSimplePicConfig(this)
             val intent = Intent(this, RecorderActivity::class.java)
