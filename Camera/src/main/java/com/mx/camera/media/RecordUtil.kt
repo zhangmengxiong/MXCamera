@@ -171,7 +171,9 @@ class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
                 //java.lang.RuntimeException: stop failed.
                 // at android.media.MediaRecorder.stop(Native Method)
                 setVideoEncoder(cameraConfig.videoEncoder)  //视频编码格式
-
+                if (maxDurationLength > 0) {
+                    setMaxDuration(maxDurationLength * 1000)
+                }
                 if (cameraIndex == CAMERA_FRONT) {
                     setOrientationHint(270)
                 } else {
