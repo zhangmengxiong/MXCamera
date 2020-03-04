@@ -188,7 +188,7 @@ class CameraConfigBuild(type: Int) {
     }
 
     /**
-     * 录制最长时长
+     * 录制最长时长 单位：秒
      * 如果不限时长，则设置为0
      */
     fun setMaxDuration(duration: Int): CameraConfigBuild {

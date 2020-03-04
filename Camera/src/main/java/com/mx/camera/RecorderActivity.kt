@@ -20,15 +20,18 @@ import kotlin.math.max
 class RecorderActivity : Activity() {
     private val cameraConfig: CameraConfig by lazy {
         (intent.getSerializableExtra(CONFIG) as CameraConfig?)
-                ?: CameraConfigBuild.createSimple3GPConfig(this)
+            ?: CameraConfigBuild.createSimple3GPConfig(this)
     }
-    private val maxDuration: Int by lazy { cameraConfig.maxDuration }
+    private val maxDuration: Int by lazy { cameraConfig.maxDuration } //单位：秒
     private val file: File by lazy { File(cameraConfig.outputFile) }
 
     private val recordUtil: RecordUtil by lazy { RecordUtil(surfaceView) }
     private val playerUtil: PlayerUtil by lazy { PlayerUtil(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
-        window.setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+        )
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recorder)
         initView()
@@ -105,12 +108,13 @@ class RecorderActivity : Activity() {
             }
 
             override fun onRecordTimeTicket(time: Long) {
+                val time = time / 1000
                 if (maxDuration > 0) {
-                    ticketView.setTime(max(maxDuration * 1000 - time, 0L).toInt())
+                    ticketView.setTime(max(maxDuration - time, 0L).toInt())
                 } else {
-                    ticketView.setTime((time / 1000).toInt())
+                    ticketView.setTime((time).toInt())
                 }
-                Log("onRecordTimeTicket $time")
+                Log("onRecordTimeTicket $time s")
             }
 
             override fun onError(msg: String?) {
