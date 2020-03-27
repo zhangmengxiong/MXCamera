@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) return
         if (requestCode == 0x22) {
-            val file = (data?.getSerializableExtra(RecorderActivity.RESULT_KEY) as File?) ?: return
+            val file = File(data?.getStringExtra(RecorderActivity.RESULT_KEY) ?: return)
             Toast.makeText(
                 this,
                 "${file.name} ${file.length() / 1024f} Kb",

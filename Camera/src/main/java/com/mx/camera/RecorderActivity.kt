@@ -13,6 +13,7 @@ import com.mx.camera.media.IRecordCall
 import com.mx.camera.media.RecordUtil
 import com.mx.camera.player.IPlayerCall
 import com.mx.camera.player.PlayerUtil
+import com.mx.camera.sensor.RotationWatch
 import kotlinx.android.synthetic.main.activity_recorder.*
 import java.io.File
 import kotlin.math.max
@@ -20,17 +21,19 @@ import kotlin.math.max
 class RecorderActivity : Activity() {
     private val cameraConfig: CameraConfig by lazy {
         (intent.getSerializableExtra(CONFIG) as CameraConfig?)
-            ?: CameraConfigBuild.createSimple3GPConfig(this)
+                ?: CameraConfigBuild.createSimple3GPConfig(this)
     }
     private val maxDuration: Int by lazy { cameraConfig.maxDuration } //单位：秒
     private val file: File by lazy { File(cameraConfig.outputFile) }
 
-    private val recordUtil: RecordUtil by lazy { RecordUtil(surfaceView) }
+    private val sensorObserver by lazy { RotationWatch(this) }
+    private val recordUtil: RecordUtil by lazy { RecordUtil(surfaceView, sensorObserver) }
     private val playerUtil: PlayerUtil by lazy { PlayerUtil(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         window.setFlags(
-            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
         )
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recorder)
@@ -47,10 +50,12 @@ class RecorderActivity : Activity() {
     override fun onStart() {
         super.onStart()
         recordUtil.startPreview()
+        sensorObserver.startListener()
     }
 
     override fun onStop() {
         recordUtil.release()
+        sensorObserver.stopListener()
         super.onStop()
     }
 

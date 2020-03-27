@@ -1,18 +1,24 @@
 package com.mx.camera.media
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.hardware.Camera
+import android.hardware.Camera.CameraInfo
 import android.media.MediaRecorder
 import android.os.Handler
 import android.view.SurfaceHolder
-import com.mx.camera.config.CameraConfig
 import com.mx.camera.Log
+import com.mx.camera.config.CameraConfig
+import com.mx.camera.sensor.RotationWatch
 import java.io.File
 import kotlin.concurrent.thread
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
+
+class RecordUtil(private val mxSurfaceView: MXSurfaceView, private val rotationWatch: RotationWatch) {
     private val mHandler = Handler()
     private lateinit var cameraConfig: CameraConfig
     private var cameraIndex = CAMERA_BACK
@@ -21,6 +27,7 @@ class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
 
     private var previewWidth: Int = 0
     private var previewHeight: Int = 0
+    private var displayOrientation: Int = 0
 
     private var isCameraLocked = true
 
@@ -36,7 +43,12 @@ class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
 
     private fun createCamera(holder: SurfaceHolder?): Camera {
         val camera = Camera.open(cameraIndex)
-        camera.setDisplayOrientation(90)//旋转90度
+        val info = CameraInfo()
+        Camera.getCameraInfo(cameraIndex, info)
+        displayOrientation = rotationWatch.calculateCameraPreviewOrientation(cameraIndex == CAMERA_FRONT, info.orientation)
+        camera.setDisplayOrientation(displayOrientation)
+
+
         camera.setPreviewDisplay(holder)
         val params = camera.parameters
         //注意此处需要根据摄像头获取最优像素，//如果不设置会按照系统默认配置最低160x120分辨率
@@ -46,6 +58,7 @@ class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
         val previewSize = SizeBiz.getPreviewSize(camera, bestWidth, bestHeight)
         val pictureSize = SizeBiz.getPictureSize(camera, bestWidth, bestHeight)
         val previewFps = SizeBiz.chooseFixedPreviewFps(camera, cameraConfig.expectPreviewFps)
+
         params.apply {
             previewWidth = previewSize.width
             previewHeight = previewSize.height
@@ -296,8 +309,18 @@ class RecordUtil(private val mxSurfaceView: MXSurfaceView) {
                 }
                 thread {
                     try {
+                        val matrix = Matrix()
                         val file = File(cameraConfig.outputFile)
-                        BitmapBiz.dataToBitmap(file, data, 90)
+                        val rotation = (displayOrientation + rotationWatch.currentRotation()) % 360
+                        if (cameraIndex == CAMERA_FRONT) {
+                            matrix.setRotate(((360 - rotation) % 360).toFloat())
+                            matrix.postScale(-1f, 1f)
+                        } else {
+                            matrix.setRotate(rotation.toFloat())
+                        }
+                        var bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
+                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true);
+                        BitmapBiz.saveBitmap(file, bitmap)
                         mHandler.post { recordCall?.onTakePicture(file) }
                     } catch (e: java.lang.Exception) {
                         e.printStackTrace()

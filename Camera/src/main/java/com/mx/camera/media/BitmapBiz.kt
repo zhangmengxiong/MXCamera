@@ -22,6 +22,14 @@ object BitmapBiz {
         os.close()
     }
 
+    fun saveBitmap(file: File, bitmap: Bitmap) {
+        file.createNewFile()
+        val os = BufferedOutputStream(FileOutputStream(file))
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
+        os.flush()
+        os.close()
+    }
+
     /**
      * 读取图片的旋转的角度
      *
